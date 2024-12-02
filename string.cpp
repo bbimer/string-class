@@ -4,29 +4,58 @@ using namespace std;
 class String
 {
 private:
-	char wrd[80];
+	int size = 0;
+	char wrd[80]{};
+	char* newArr = nullptr;
 
 public:
 	String(const char* word) {
-		size_t i = 0;
-
-		while (wrd[i] != '\0' && i < sizeof(wrd) - 1) {
-			wrd[i] = word[i];
-			++i;
+		size = strlen(word);
+		if (size < sizeof(wrd))
+		{
+			size_t i = 0;
+			while (i < size && i < sizeof(wrd) - 1) {
+				wrd[i] = word[i];
+				++i;
+			}
+			wrd[i] = '\0';
 		}
-		wrd[i] = '\0';
+		else
+		{
+			size_t BigSize = strlen(word) + 1;
+			newArr = new char[BigSize];
+			for (size_t i = 0; i < BigSize; ++i)
+			{
+				newArr[i] = word[i];
+			}
+		}
+	}
+
+
+	~String() {
+		delete[] newArr;
 	}
 
 	void print() {
-		cout << wrd << endl;
+		if (newArr != nullptr)
+		{
+			cout << newArr << endl;
+		}
+		else
+		{
+			cout << wrd << endl;
+		}
 	}
 		
 };
 
 
 int main() {
-	String str("hello");
-	str.print();
+	String str1("hello");
+	str1.print();
+
+	String str2("here are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.");
+	str2.print();
 
 	return 0;
 }
