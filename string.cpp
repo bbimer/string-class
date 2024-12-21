@@ -88,7 +88,6 @@ public:
 		if (newArr != nullptr)
 		{
 			strcat_s(new_array, new_size + 1, newArr);
-
 		}
 		else
 		{
@@ -108,8 +107,96 @@ public:
 		return result;
 	}
 
+	String operator+=(const String& other) const {
+		int new_size = size + other.size;
+		char* new_array = new char[new_size + 1];
+		new_array[0] = '\0';
+
+		if (other.newArr != nullptr)
+		{
+			strcat_s(new_array, new_size + 1, other.newArr);
+		}
+		else
+		{
+			strcat_s(new_array, new_size + 1, other.wrd);
+		}
+
+		if (newArr != nullptr)
+		{
+			strcat_s(new_array, new_size + 1, newArr);
+		}
+		else
+		{
+			strcat_s(new_array, new_size + 1, wrd);
+		}
+
+		String result(new_array);
+		delete[] new_array;
+		return result;
+	}
+
+	char& operator[](size_t index) {
+		if (newArr != nullptr)
+		{
+			return newArr[index];
+		}
+		else
+		{
+			return wrd[index];
+		}
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const String& str) {
+		if (str.newArr != nullptr) {
+			os << str.newArr;
+		}
+		else {
+			os << str.wrd;
+		}
+		return os;
+	}
+
+	bool operator==(const String& other) const {
+		if (newArr != nullptr)
+		{
+			return comparison1(newArr, other.newArr);
+		}
+		else
+		{
+			return comparison1(wrd, other.wrd);
+		}
+	}
+
+	bool operator!=(const String& other) const {
+		if (newArr != nullptr)
+		{
+			return comparison2(newArr, other.newArr);
+		}
+		else
+		{
+			return comparison2(wrd, other.wrd);
+		}
+	}
+
+
 	~String() {
 		delete[] newArr;
+	}
+
+	bool comparison1(const char* a, const char* b) const {
+		if (a == b)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool comparison2(const char* a, const char* b) const {
+		if (a != b)
+		{
+			return true;
+		}
+		return false;
 	}
 
 	void print() {
@@ -129,13 +216,24 @@ public:
 int main() {
 	String str1("hello");
 	str1.print();
-
-	String str2("here are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.");
-	str2 = str1;
-	str2.print();
-
+	String str2("here are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form");
+	//str2 = str1;
+	//str2.print();
+	cout << "=========================" << endl;
 	String str3 = str1 + str2;
 	str3.print();
+	cout << "=========================" << endl;
+	String str4 = str1 += str2;
+	str4.print();
+	cout << "=========================" << endl;
+	cout << str4[3] << endl;
+	cout << "=========================" << endl;
+	cout << str1 << endl;
+	cout << "=========================" << endl;
+	cout << (str1 == str2) << endl;
+	cout << "=========================" << endl;
+	cout << (str1 != str2) << endl;
+	cout << "=========================" << endl;
 
 	return 0;
 }
