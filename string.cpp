@@ -159,31 +159,52 @@ public:
 	bool operator==(const String& other) const {
 		if (newArr != nullptr)
 		{
-			return comparison1(newArr, other.newArr);
+			return equal(newArr, other.newArr);
 		}
 		else
 		{
-			return comparison1(wrd, other.wrd);
+			return equal(wrd, other.wrd);
 		}
 	}
 
 	bool operator!=(const String& other) const {
 		if (newArr != nullptr)
 		{
-			return comparison2(newArr, other.newArr);
+			return unequal(newArr, other.newArr);
 		}
 		else
 		{
-			return comparison2(wrd, other.wrd);
+			return unequal(wrd, other.wrd);
 		}
 	}
 
+	bool operator>(const String& other) const {
+		if (newArr != nullptr)
+		{
+			return more(newArr, other.newArr);
+		}
+		else
+		{
+			return more(wrd, other.wrd);
+		}
+	}
+
+	bool operator<(const String& other) const {
+		if (newArr != nullptr)
+		{
+			return less(newArr, other.newArr);
+		}
+		else
+		{
+			return less(wrd, other.wrd);
+		}
+	}
 
 	~String() {
 		delete[] newArr;
 	}
 
-	bool comparison1(const char* a, const char* b) const {
+	bool equal(const char* a, const char* b) const {
 		if (a == b)
 		{
 			return true;
@@ -191,13 +212,30 @@ public:
 		return false;
 	}
 
-	bool comparison2(const char* a, const char* b) const {
+	bool unequal(const char* a, const char* b) const {
 		if (a != b)
 		{
 			return true;
 		}
 		return false;
 	}
+
+	bool more(const char* a, const char* b) const {
+		if (a > b)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool less(const char* a, const char* b) const {
+		if (a < b)
+		{
+			return true;
+		}
+		return false;
+	}
+
 
 	void print() {
 		if (newArr != nullptr)
@@ -234,6 +272,9 @@ int main() {
 	cout << "=========================" << endl;
 	cout << (str1 != str2) << endl;
 	cout << "=========================" << endl;
+	cout << (str1 > str2) << endl;
+	cout << "=========================" << endl;
+	cout << (str1 < str2) << endl;
 
 	return 0;
 }
