@@ -43,7 +43,7 @@ public:
 			{
 				newArr[i] = other.newArr[i];
 			}
-			other.newArr[i] = '\0';
+			newArr[i] = '\0';
 		}
 		else
 		{
@@ -53,6 +53,23 @@ public:
 			}
 		}
 	}
+
+	String(String&& other) noexcept {
+		size = other.size;
+		newArr = other.newArr; 
+
+		if (newArr == nullptr) {
+			for (size_t i = 0; i < sizeof(wrd); ++i) {
+				wrd[i] = other.wrd[i];
+			}
+		}
+
+		other.size = 0;
+		other.newArr = nullptr;
+		other.wrd[0] = '\0';
+	}
+
+
 
 	String& operator=(const String& other) {
 		if (this == &other) return *this;
@@ -79,6 +96,29 @@ public:
 		}
 		return *this;
 	}
+
+	String& operator=(String&& other) noexcept {
+		if (this == &other) return *this; 
+
+		delete[] newArr; 
+
+		size = other.size;
+		newArr = other.newArr;
+
+		if (newArr == nullptr) {
+			for (size_t i = 0; i < sizeof(wrd); ++i) {
+				wrd[i] = other.wrd[i];
+			}
+		}
+
+		other.size = 0;
+		other.newArr = nullptr;
+		other.wrd[0] = '\0';
+
+		return *this;
+	}
+
+
 
 	String operator+(const String& other) const {
 		int new_size = size + other.size;
@@ -130,6 +170,7 @@ public:
 			strcat_s(new_array, new_size + 1, wrd);
 		}
 
+		delete[] newArr;
 		String result(new_array);
 		delete[] new_array;
 		return result;
@@ -168,36 +209,15 @@ public:
 	}
 
 	bool operator!=(const String& other) const {
-		if (newArr != nullptr)
-		{
-			return unequal(newArr, other.newArr);
-		}
-		else
-		{
-			return unequal(wrd, other.wrd);
-		}
+		return !(*this == other);
 	}
 
 	bool operator>(const String& other) const {
-		if (newArr != nullptr)
-		{
-			return more(newArr, other.newArr);
-		}
-		else
-		{
-			return more(wrd, other.wrd);
-		}
+		return size > other.size;
 	}
 
 	bool operator<(const String& other) const {
-		if (newArr != nullptr)
-		{
-			return less(newArr, other.newArr);
-		}
-		else
-		{
-			return less(wrd, other.wrd);
-		}
+		return size < other.size;
 	}
 
 	~String() {
@@ -211,31 +231,6 @@ public:
 		}
 		return false;
 	}
-
-	bool unequal(const char* a, const char* b) const {
-		if (a != b)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	bool more(const char* a, const char* b) const {
-		if (a > b)
-		{
-			return true;
-		}
-		return false;
-	}
-
-	bool less(const char* a, const char* b) const {
-		if (a < b)
-		{
-			return true;
-		}
-		return false;
-	}
-
 
 	void print() {
 		if (newArr != nullptr)
@@ -253,28 +248,24 @@ public:
 
 int main() {
 	String str1("hello");
-	str1.print();
+	//str1.print();
 	String str2("here are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form");
 	//str2 = str1;
 	//str2.print();
-	cout << "=========================" << endl;
 	String str3 = str1 + str2;
+	cout << "operator +\t";
 	str3.print();
-	cout << "=========================" << endl;
+	cout << "operator +=\t";
 	String str4 = str1 += str2;
 	str4.print();
-	cout << "=========================" << endl;
-	cout << str4[3] << endl;
-	cout << "=========================" << endl;
-	cout << str1 << endl;
-	cout << "=========================" << endl;
-	cout << (str1 == str2) << endl;
-	cout << "=========================" << endl;
-	cout << (str1 != str2) << endl;
-	cout << "=========================" << endl;
-	cout << (str1 > str2) << endl;
-	cout << "=========================" << endl;
-	cout << (str1 < str2) << endl;
+	cout << "operator []\t" << str4[3] << endl;
+	cout << "operator <<\t" << str1 << endl;
+	cout << "operator ==\t" << (str1 == str2) << endl;
+	cout << "operator !=\t" << (str1 != str2) << endl;
+	cout << "operator >\t" << (str1 > str2) << endl;
+	cout << "operator <\t" << (str1 < str2) << endl;
+	String str5 = std::move(str1);
+	cout << "operator (move)\t" << str4 << endl;
 
 	return 0;
 }
