@@ -6,67 +6,38 @@ class String
 {
 private:
 	int size = 0;
-	char wrd[80]{};
 	char* newArr = nullptr;
 
 public:
 	String(const char* word) {
-		size = strlen(word);
-		if (size < sizeof(wrd))
-		{
-			size_t i = 0;
-			while (i < size && i < sizeof(wrd) - 1) {
-				wrd[i] = word[i];
-				++i;
-			}
-			wrd[i] = '\0';
+		size = 0;
+		while (word[size] != '\0') {
+			++size;
 		}
-		else
-		{
-			size_t BigSize = strlen(word) + 1;
-			newArr = new char[BigSize];
-			for (size_t i = 0; i < BigSize; ++i)
-			{
-				newArr[i] = word[i];
-			}
+
+		newArr = new char[size + 1];
+		for (int i = 0; i < size; ++i) {
+			newArr[i] = word[i];
 		}
+		newArr[size] = '\0';
 	}
 
 	String(const String& other) {
 		size = other.size;
+		newArr = new char[size + 1];
 
-		if (other.newArr != nullptr)
-		{
-			size_t i = 0;
-			newArr = new char[size + 1];
-			for (size_t i = 0; i < size; ++i)
-			{
-				newArr[i] = other.newArr[i];
-			}
-			newArr[i] = '\0';
+		for (int i = 0; i < size; ++i) {
+			newArr[i] = other.newArr[i];
 		}
-		else
-		{
-			for (size_t i = 0; i < sizeof(wrd); ++i)
-			{
-				wrd[i] = other.wrd[i];
-			}
-		}
+
+		newArr[size] = '\0';
 	}
 
 	String(String&& other) noexcept {
 		size = other.size;
-		newArr = other.newArr; 
-
-		if (newArr == nullptr) {
-			for (size_t i = 0; i < sizeof(wrd); ++i) {
-				wrd[i] = other.wrd[i];
-			}
-		}
-
+		newArr = other.newArr;
 		other.size = 0;
 		other.newArr = nullptr;
-		other.wrd[0] = '\0';
 	}
 
 
@@ -75,45 +46,24 @@ public:
 		if (this == &other) return *this;
 
 		delete[] newArr;
-		newArr = nullptr;
-
 		size = other.size;
-		if (other.newArr != nullptr)
-		{
-			newArr = new char[size + 1];
-			for (size_t i = 0; i < size; ++i)
-			{
-				newArr[i] = other.newArr[i];
-			}
-			newArr[size] = '\0';
-		}
-		else
-		{
-			for (size_t i = 0; i < sizeof(wrd); ++i)
-			{
-				wrd[i] = other.wrd[i];
-			}
-		}
+		newArr = new char[size + 1];
+		for (int i = 0; i < size; ++i)
+			newArr[i] = other.newArr[i];
+		newArr[size] = '\0';
+
 		return *this;
 	}
 
 	String& operator=(String&& other) noexcept {
-		if (this == &other) return *this; 
+		if (this == &other) return *this;
 
-		delete[] newArr; 
+		delete[] newArr;
 
 		size = other.size;
 		newArr = other.newArr;
-
-		if (newArr == nullptr) {
-			for (size_t i = 0; i < sizeof(wrd); ++i) {
-				wrd[i] = other.wrd[i];
-			}
-		}
-
 		other.size = 0;
 		other.newArr = nullptr;
-		other.wrd[0] = '\0';
 
 		return *this;
 	}
@@ -123,89 +73,47 @@ public:
 	String operator+(const String& other) const {
 		int new_size = size + other.size;
 		char* new_array = new char[new_size + 1];
-		new_array[0] = '\0';
 
-		if (newArr != nullptr)
-		{
-			strcat_s(new_array, new_size + 1, newArr);
-		}
-		else
-		{
-			strcat_s(new_array, new_size + 1, wrd);
-		}
+		for (int i = 0; i < size; ++i) { new_array[i] = newArr[i]; }
 
-		if (other.newArr != nullptr)
-		{
-			strcat_s(new_array, new_size + 1, other.newArr);
-		}
-		else
-		{
-			strcat_s(new_array, new_size + 1, other.wrd);
-		}
+		for (int i = 0; i < other.size; ++i) { new_array[size + i] = other.newArr[i]; }
+		new_array[new_size] = '\0';
+
 		String result(new_array);
 		delete[] new_array;
 		return result;
 	}
 
-	String operator+=(const String& other) const {
+
+	String& operator+=(const String& other) {
 		int new_size = size + other.size;
 		char* new_array = new char[new_size + 1];
-		new_array[0] = '\0';
 
-		if (other.newArr != nullptr)
-		{
-			strcat_s(new_array, new_size + 1, other.newArr);
-		}
-		else
-		{
-			strcat_s(new_array, new_size + 1, other.wrd);
-		}
-
-		if (newArr != nullptr)
-		{
-			strcat_s(new_array, new_size + 1, newArr);
-		}
-		else
-		{
-			strcat_s(new_array, new_size + 1, wrd);
-		}
+		for (int i = 0; i < size; ++i) { new_array[i] = newArr[i]; }
+		for (int j = 0; j < other.size; ++j) { new_array[j] = other.newArr[j]; }
+		new_array[new_size] = '\0';
 
 		delete[] newArr;
-		String result(new_array);
-		delete[] new_array;
-		return result;
+		newArr = new_array;
+		size = new_size;
+
+		return *this;
 	}
 
 	char& operator[](size_t index) {
-		if (newArr != nullptr)
-		{
-			return newArr[index];
-		}
-		else
-		{
-			return wrd[index];
-		}
+		if (newArr != nullptr) { return newArr[index]; }
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const String& str) {
-		if (str.newArr != nullptr) {
-			os << str.newArr;
-		}
-		else {
-			os << str.wrd;
-		}
+		if (str.newArr != nullptr) { os << str.newArr; }
 		return os;
 	}
 
 	bool operator==(const String& other) const {
-		if (newArr != nullptr)
-		{
-			return equal(newArr, other.newArr);
-		}
-		else
-		{
-			return equal(wrd, other.wrd);
-		}
+		if (size != other.size) return false;
+		for (int i = 0; i < size; ++i)
+			if (newArr[i] != other.newArr[i]) return false;
+		return true;
 	}
 
 	bool operator!=(const String& other) const {
@@ -224,34 +132,15 @@ public:
 		delete[] newArr;
 	}
 
-	bool equal(const char* a, const char* b) const {
-		if (a == b)
-		{
-			return true;
-		}
-		return false;
-	}
-
 	void print() {
-		if (newArr != nullptr)
-		{
-			cout << newArr << endl;
-		}
-		else
-		{
-			cout << wrd << endl;
-		}
+		if (newArr != nullptr) { cout << newArr << endl; }
 	}
-		
-};
 
+};
 
 int main() {
 	String str1("hello");
-	//str1.print();
 	String str2("here are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form");
-	//str2 = str1;
-	//str2.print();
 	String str3 = str1 + str2;
 	cout << "operator +\t";
 	str3.print();
