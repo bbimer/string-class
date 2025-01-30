@@ -90,7 +90,7 @@ public:
 		char* new_array = new char[new_size + 1];
 
 		for (int i = 0; i < size; ++i) { new_array[i] = newArr[i]; }
-		for (int j = 0; j < other.size; ++j) { new_array[j] = other.newArr[j]; }
+		for (int j = 0; j < other.size; ++j) { new_array[size + j] = other.newArr[j]; }
 		new_array[new_size] = '\0';
 
 		delete[] newArr;
