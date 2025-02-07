@@ -10,6 +10,11 @@ private:
 
 public:
 	String(const char* word) {
+		if (word == nullptr)
+		{
+			throw invalid_argument("constructor: nullptr passed as input");
+		}
+
 		size = 0;
 		while (word[size] != '\0') {
 			++size;
@@ -101,7 +106,9 @@ public:
 	}
 
 	char& operator[](size_t index) {
-		if (newArr != nullptr) { return newArr[index]; }
+		if (newArr != nullptr) { throw runtime_error("operator[]: attempt to access empty string"); }
+		if (index >= size) { throw out_of_range("operator[]: index out of range"); }
+		return newArr[index]; 
 	}
 
 	friend std::ostream& operator<<(std::ostream& os, const String& str) {
@@ -134,27 +141,35 @@ public:
 
 	void print() {
 		if (newArr != nullptr) { cout << newArr << endl; }
+		else { throw runtime_error("print: attempt to print empty string"); }
 	}
 
 };
 
 int main() {
-	String str1("hello");
-	String str2("here are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form");
-	String str3 = str1 + str2;
-	cout << "operator +\t";
-	str3.print();
-	cout << "operator +=\t";
-	String str4 = str1 += str2;
-	str4.print();
-	cout << "operator []\t" << str4[3] << endl;
-	cout << "operator <<\t" << str1 << endl;
-	cout << "operator ==\t" << (str1 == str2) << endl;
-	cout << "operator !=\t" << (str1 != str2) << endl;
-	cout << "operator >\t" << (str1 > str2) << endl;
-	cout << "operator <\t" << (str1 < str2) << endl;
-	String str5 = std::move(str1);
-	cout << "operator (move)\t" << str4 << endl;
+	try
+	{
+		String str1("hello");
+		String str2("here are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form");
+		String str3 = str1 + str2;
+		cout << "operator +\t";
+		str3.print();
+		cout << "operator +=\t";
+		String str4 = str1 += str2;
+		str4.print();
+		cout << "operator []\t" << str4[3] << endl;
+		cout << "operator <<\t" << str1 << endl;
+		cout << "operator ==\t" << (str1 == str2) << endl;
+		cout << "operator !=\t" << (str1 != str2) << endl;
+		cout << "operator >\t" << (str1 > str2) << endl;
+		cout << "operator <\t" << (str1 < str2) << endl;
+		String str5 = std::move(str1);
+		cout << "operator (move)\t" << str4 << endl;
+	}
+	catch (const exception& e)
+	{
+		cerr << "Exception caught: " << e.what() << endl;
+	}
 
 	return 0;
 }
